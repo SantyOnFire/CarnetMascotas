@@ -1,19 +1,25 @@
 package com.example.mascotascarnet
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
-fun ScreenA(onRegistrarClick: (String, String, String, String) -> Unit = { _, _, _, _ -> }) {
+fun ScreenA(onRegistrarClick: (String, String, String, String, String) -> Unit) {
     var nombre by rememberSaveable { mutableStateOf("") }
     var raza by rememberSaveable { mutableStateOf("") }
+    var tamaño by rememberSaveable { mutableStateOf("") }
     var edad by rememberSaveable { mutableStateOf("") }
-    var peso by rememberSaveable { mutableStateOf("") }
+    var fotoUrl by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -22,7 +28,27 @@ fun ScreenA(onRegistrarClick: (String, String, String, String) -> Unit = { _, _,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Registro de Mascotas", style = MaterialTheme.typography.headlineSmall)
+        Text("REGISTRO DE MASCOTAS", style = MaterialTheme.typography.headlineLarge)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Campo para URL de la foto
+        OutlinedTextField(
+            value = fotoUrl,
+            onValueChange = { fotoUrl = it },
+            label = { Text("URL de la foto") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        if (fotoUrl.isNotBlank()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Image(
+                painter = rememberAsyncImagePainter(fotoUrl),
+                contentDescription = "Vista previa de la foto",
+                modifier = Modifier.size(120.dp),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -45,30 +71,36 @@ fun ScreenA(onRegistrarClick: (String, String, String, String) -> Unit = { _, _,
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = edad,
-            onValueChange = { edad = it },
-            label = { Text("Edad") },
+            value = tamaño,
+            onValueChange = { tamaño = it },
+            label = { Text("Tamaño") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = peso,
-            onValueChange = { peso = it },
-            label = { Text("Peso") },
+            value = edad,
+            onValueChange = { edad = it },
+            label = { Text("Edad") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                onRegistrarClick(nombre, raza, edad, peso)
+                if (nombre.isNotBlank() && raza.isNotBlank() &&
+                    tamaño.isNotBlank() && edad.isNotBlank() && fotoUrl.isNotBlank()) {
+                    onRegistrarClick(nombre, raza, tamaño, edad, fotoUrl)
+                }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = nombre.isNotBlank() && raza.isNotBlank() &&
+                    tamaño.isNotBlank() && edad.isNotBlank() && fotoUrl.isNotBlank()
         ) {
-            Text("Registrar")
+            Text("REGISTRAR")
         }
     }
 }

@@ -1,8 +1,11 @@
 package com.example.mascotascarnet
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 data class Mascota(
     val nombre: String = "",
@@ -14,9 +17,11 @@ data class Mascota(
 
 class MascotaViewModel : ViewModel() {
     private val _mascota = MutableStateFlow(Mascota())
-    val mascota: StateFlow<Mascota> = _mascota
+    val mascota: StateFlow<Mascota> = _mascota.asStateFlow()
 
     fun registrarMascota(nuevaMascota: Mascota) {
-        _mascota.value = nuevaMascota
+        viewModelScope.launch {
+            _mascota.emit(nuevaMascota)
+        }
     }
 }

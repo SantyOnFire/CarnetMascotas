@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Ignorar errores de Kotlin
+.kotlin/

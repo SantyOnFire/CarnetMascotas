@@ -5,15 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.mascotascarnet.ui.theme.MascotasCarnetTheme
 
 class MainActivity : ComponentActivity() {
-
     private val mascotaViewModel: MascotaViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,32 +26,38 @@ class MainActivity : ComponentActivity() {
                 Scaffold { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         if (!mostrarCarnet) {
-                            ScreenA { nombre, raza, edad, peso ->
-                                val nuevaMascota = Mascota(
-                                    nombre = nombre,
-                                    raza = raza,
-                                    edad = edad,
-                                    tamaño = peso, // Aquí usamos 'peso' como tamaño por compatibilidad con tu ViewModel
-                                    fotoUrl = "https://cdn-icons-png.flaticon.com/512/616/616408.png" // Puedes cambiarlo luego
+                            ScreenA { nombre, raza, tamano, edad, fotoUrl ->
+                                mascotaViewModel.registrarMascota(
+                                    Mascota(
+                                        nombre = nombre,
+                                        raza = raza,
+                                        tamaño = tamano,
+                                        edad = edad,
+                                        fotoUrl = fotoUrl
+                                    )
                                 )
-                                mascotaViewModel.registrarMascota(nuevaMascota)
                                 mostrarCarnet = true
                             }
                         } else {
                             val mascota by mascotaViewModel.mascota.collectAsState()
 
-                            ScreenB(
-                                nombre = mascota.nombre,
-                                raza = mascota.raza,
-                                edad = mascota.edad,
-                                fotoUrl = mascota.fotoUrl
-                            )
-
-                            Button(
-                                onClick = { mostrarCarnet = false },
-                                modifier = Modifier.padding(16.dp)
+                            Column(
+                                modifier = Modifier.fillMaxSize()
                             ) {
-                                Text("Volver")
+                                ScreenB(
+                                    raza = mascota.raza,
+                                    tamaño = mascota.tamaño,
+                                    fotoUrl = mascota.fotoUrl
+                                )
+
+                                Button(
+                                    onClick = { mostrarCarnet = false },
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    Text("Volver")
+                                }
                             }
                         }
                     }
