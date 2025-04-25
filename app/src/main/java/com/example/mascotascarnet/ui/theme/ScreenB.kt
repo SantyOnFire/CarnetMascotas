@@ -4,7 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,18 +16,24 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun ScreenB(nombre: String, raza: String, tamaño: String, edad: String, fotoUrl: String) {
+fun ScreenB(
+    nombre: String,
+    raza: String,
+    tamaño: String,
+    edad: String,
+    fotoUrl: String,
+    onGuardarClick: () -> Unit,
+    onEliminarClick: () -> Unit
+) {
+    var mostrarDialogo by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(24.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        )
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -51,31 +57,57 @@ fun ScreenB(nombre: String, raza: String, tamaño: String, edad: String, fotoUrl
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-                Text("Nombre:", fontWeight = FontWeight.Bold)
-                Text(nombre)
-            }
+            InfoRow(label = "Nombre:", value = nombre)
+            InfoRow(label = "Raza:", value = raza)
+            InfoRow(label = "Tamaño:", value = tamaño)
+            InfoRow(label = "Edad:", value = edad)
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-                Text("Raza:", fontWeight = FontWeight.Bold)
-                Text(raza)
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-                Text("Tamaño:", fontWeight = FontWeight.Bold)
-                Text(tamaño)
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-                Text("Edad:", fontWeight = FontWeight.Bold)
-                Text(edad)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                Button(onClick = { onGuardarClick() }) {
+                    Text("Guardar")
+                }
+                Button(onClick = { mostrarDialogo = true }, colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )) {
+                    Text("Eliminar")
+                }
             }
         }
+    }
+
+    if (mostrarDialogo) {
+        AlertDialog(
+            onDismissRequest = { mostrarDialogo = false },
+            title = { Text("Confirmar eliminación") },
+            text = { Text("¿Estás seguro de que deseas eliminar esta mascota?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    mostrarDialogo = false
+                    onEliminarClick()
+                }) {
+                    Text("Sí")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { mostrarDialogo = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun InfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = label, fontWeight = FontWeight.Bold)
+        Text(text = value)
     }
 }

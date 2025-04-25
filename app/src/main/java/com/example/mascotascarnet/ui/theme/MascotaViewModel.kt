@@ -16,12 +16,17 @@ data class Mascota(
 )
 
 class MascotaViewModel : ViewModel() {
-    private val _mascota = MutableStateFlow(Mascota())
-    val mascota: StateFlow<Mascota> = _mascota.asStateFlow()
+    private val _listaMascotas = MutableStateFlow<List<Mascota>>(emptyList())
+    val listaMascotas: StateFlow<List<Mascota>> = _listaMascotas.asStateFlow()
 
-    fun registrarMascota(nuevaMascota: Mascota) {
-        viewModelScope.launch {
-            _mascota.emit(nuevaMascota)
-        }
+    fun registrarMascota(mascota: Mascota) {
+        _listaMascotas.value = _listaMascotas.value + mascota
+    }
+
+    fun eliminarMascota(mascota: Mascota) {
+        _listaMascotas.value = _listaMascotas.value - mascota
     }
 }
+
+
+

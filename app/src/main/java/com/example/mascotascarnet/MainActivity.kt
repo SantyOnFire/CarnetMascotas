@@ -21,44 +21,86 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MascotasCarnetTheme {
-                var mostrarCarnet by remember { mutableStateOf(false) }
+                var pantallaActual by remember { mutableStateOf("ScreenA") }
+                var mascotaSeleccionada by remember { mutableStateOf<Mascota?>(null) }
+                var mostrarDialogo by remember { mutableStateOf(false) }
+
+                val listaMascotas by mascotaViewModel.listaMascotas.collectAsState()
 
                 Scaffold { padding ->
                     Box(modifier = Modifier.padding(padding)) {
-                        if (!mostrarCarnet) {
-                            ScreenA { nombre, raza, tamano, edad, fotoUrl ->
-                                mascotaViewModel.registrarMascota(
-                                    Mascota(
-                                        nombre = nombre,
-                                        raza = raza,
-                                        tamaño = tamano,
-                                        edad = edad,
-                                        fotoUrl = fotoUrl
-                                    )
-                                )
-                                mostrarCarnet = true
+                        when (pantallaActual) {
+                            "ScreenA" -> ScreenA { nombre, raza, tamano, edad, fotoUrl ->
+                                val nuevaMascota = Mascota(nombre, raza, tamano, edad, fotoUrl)
+                                mascotaViewModel.registrarMascota(nuevaMascota)
+                                pantallaActual = "ScreenC"
                             }
-                        } else {
-                            val mascota by mascotaViewModel.mascota.collectAsState()
 
-                            Column(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                ScreenB(
-                                    nombre = mascota.nombre,
-                                    raza = mascota.raza,
-                                    tamaño = mascota.tamaño,
-                                    edad = mascota.edad,
-                                    fotoUrl = mascota.fotoUrl
-                                )
+                            "ScreenC" -> ScreenC(
+                                mascotas = listaMascotas,
+                                onMascotaClick = { mascota ->
+                                    mascotaSeleccionada = mascota
+                                    pantallaActual = "ScreenB"
+                                }
+                            )
 
-                                Button(
-                                    onClick = { mostrarCarnet = false },
-                                    modifier = Modifier
-                                        .padding(16.dp)
-                                        .fillMaxWidth()
-                                ) {
-                                    Text("Volver")
+                            "ScreenB" -> {
+                                mascotaSeleccionada?.let { mascota ->
+                                    Column(modifier = Modifier.fillMaxSize()) {
+                                        ScreenB(
+                                            nombre = mascota.nombre,
+                                            raza = mascota.raza,
+                                            tamaño = mascota.tamaño,
+                                            edad = mascota.edad,
+                                            fotoUrl = mascota.fotoUrl
+                                        )
+
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Button(onClick = {
+                                                pantallaActual = "ScreenC"
+                                            }) {
+                                                Text("Volver")
+                                            }
+
+                                            Button(
+                                                onClick = { mostrarDialogo = true },
+                                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                                            ) {
+                                                Text("Eliminar")
+                                            }
+                                        }
+
+                                        if (mostrarDialogo) {
+                                            AlertDialog(
+                                                onDismissRequest = { mostrarDialogo = false },
+                                                title = { Text("Confirmar eliminación") },
+                                                text = { Text("¿Estás seguro de que deseas eliminar esta mascota?") },
+                                                confirmButton = {
+                                                    TextButton(onClick = {
+                                                        mascotaSeleccionada?.let {
+                                                            mascotaViewModel.eliminarMascota(it)
+                                                        }
+                                                        mostrarDialogo = false
+                                                        pantallaActual = "ScreenC"
+                                                    }) {
+                                                        Text("Sí")
+                                                    }
+                                                },
+                                                dismissButton = {
+                                                    TextButton(onClick = {
+                                                        mostrarDialogo = false
+                                                    }) {
+                                                        Text("No")
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
