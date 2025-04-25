@@ -45,8 +45,10 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize()
                             ) {
                                 ScreenB(
+                                    nombre = mascota.nombre,
                                     raza = mascota.raza,
                                     tamaño = mascota.tamaño,
+                                    edad = mascota.edad,
                                     fotoUrl = mascota.fotoUrl
                                 )
 

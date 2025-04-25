@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun ScreenB(raza: String, tamaño: String, fotoUrl: String) {
+fun ScreenB(nombre: String, raza: String, tamaño: String, edad: String, fotoUrl: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,22 +51,30 @@ fun ScreenB(raza: String, tamaño: String, fotoUrl: String) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
+                Text("Nombre:", fontWeight = FontWeight.Bold)
+                Text(nombre)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
                 Text("Raza:", fontWeight = FontWeight.Bold)
                 Text(raza)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
                 Text("Tamaño:", fontWeight = FontWeight.Bold)
                 Text(tamaño)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
+                Text("Edad:", fontWeight = FontWeight.Bold)
+                Text(edad)
             }
         }
     }
