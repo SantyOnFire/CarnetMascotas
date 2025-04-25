@@ -69,7 +69,6 @@ fun ScreenA(onRegistrarClick: (String, String, String, String, String) -> Unit) 
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Campos de entrada
         OutlinedTextField(
             value = nombre,
             onValueChange = { nombre = it },
@@ -107,7 +106,6 @@ fun ScreenA(onRegistrarClick: (String, String, String, String, String) -> Unit) 
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        // Botón de registrar
         Button(
             onClick = {
                 if (nombre.isNotBlank() && raza.isNotBlank() &&
