@@ -33,14 +33,14 @@ class MainActivity : ComponentActivity() {
                             "ScreenA" -> ScreenA { nombre, raza, tamano, edad, fotoUrl ->
                                 val nuevaMascota = Mascota(nombre, raza, tamano, edad, fotoUrl)
                                 mascotaViewModel.registrarMascota(nuevaMascota)
-                                pantallaActual = "ScreenC"
+                                pantallaActual = "ScreenC" // Cambia a la pantalla C después de agregar la mascota
                             }
 
                             "ScreenC" -> ScreenC(
                                 mascotas = listaMascotas,
                                 onMascotaClick = { mascota ->
                                     mascotaSeleccionada = mascota
-                                    pantallaActual = "ScreenB"
+                                    pantallaActual = "ScreenB" // Cambia a la pantalla B al seleccionar una mascota
                                 }
                             )
 
@@ -52,7 +52,16 @@ class MainActivity : ComponentActivity() {
                                             raza = mascota.raza,
                                             tamaño = mascota.tamaño,
                                             edad = mascota.edad,
-                                            fotoUrl = mascota.fotoUrl
+                                            fotoUrl = mascota.fotoUrl,
+                                            onGuardarClick = {
+                                                // Lógica para guardar si es necesario
+                                                pantallaActual = "ScreenC" // Volver a la pantalla C después de guardar
+                                            },
+                                            onEliminarClick = {
+                                                // Lógica para eliminar la mascota
+                                                mascotaViewModel.eliminarMascota(mascota)
+                                                pantallaActual = "ScreenC" // Volver a la pantalla C después de eliminar
+                                            }
                                         )
 
                                         Row(
@@ -62,7 +71,7 @@ class MainActivity : ComponentActivity() {
                                             horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
                                             Button(onClick = {
-                                                pantallaActual = "ScreenC"
+                                                pantallaActual = "ScreenC" // Volver a la pantalla C
                                             }) {
                                                 Text("Volver")
                                             }
@@ -84,16 +93,16 @@ class MainActivity : ComponentActivity() {
                                                     TextButton(onClick = {
                                                         mascotaSeleccionada?.let {
                                                             mascotaViewModel.eliminarMascota(it)
+                                                            pantallaActual = "ScreenC" // Volver a la pantalla C después de eliminar
                                                         }
                                                         mostrarDialogo = false
-                                                        pantallaActual = "ScreenC"
                                                     }) {
                                                         Text("Sí")
                                                     }
                                                 },
                                                 dismissButton = {
                                                     TextButton(onClick = {
-                                                        mostrarDialogo = false
+                                                        mostrarDialogo = false // Solo cierra el diálogo si se cancela
                                                     }) {
                                                         Text("No")
                                                     }
